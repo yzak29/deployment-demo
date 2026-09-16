@@ -1,20 +1,26 @@
-FROM eclipse-temurin:17-jdk-jammy as build
+# =========================
+# Build stage
+# =========================
+FROM maven:3.9-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
+# Copie d'abord le pom pour profiter du cache Docker
 COPY pom.xml .
 
-RUN chmod +x mvnw
+# Télécharge les dépendances
+RUN mvn dependency:go-offline
 
-RUN ./mvnw dependency:go-offline
+# Copie le code source
+COPY src ./src
 
-COPY src src
+# Compile l'application
+RUN mvn clean package -DskipTests
 
-RUN ./mvnw clean package -DskipTests
 
-
+# =========================
+# Runtime stage
+# =========================
 FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /app
