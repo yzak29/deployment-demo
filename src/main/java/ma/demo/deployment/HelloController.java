@@ -18,6 +18,7 @@ public class HelloController {
 
     @GetMapping("/hello")
     public Map<String, String> hello() {
+        System.out.println("Bonjour depuis Spring Boot !");
         return Map.of(
                 "message", "Bonjour depuis Spring Boot !",
                 "status", "OK"
